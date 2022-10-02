@@ -1,0 +1,87 @@
+* {
+    margin: 0;
+    padding: 10px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+body {
+    background-color: rgba(118, 118, 221, 0.617);
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn {
+    font-weight: bold;
+    background-color: rgb(200, 251, 234);
+    padding: 5px;
+    color: navy;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    color: navy;
+    padding: 10px;
+}
+
+.container {
+    width: 80vw;
+    max-width: 80%;
+    background-color: aliceblue;
+    height: 70vh;
+    box-shadow: 8px 8px navy;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.controls {
+    padding: 5px;
+    order: 4;
+}
+
+.hidden {
+    display: none;
+}
+
+.options {
+    padding: 5px;
+    order: 3;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+#question-text {
+    font-weight: bolder;
+    font-size: larger;
+}
+
+.flex {
+    display: flex;
+}
+
+.w-20 {
+    width: 20%;
+}
+.w-80 {
+    width: 80%;
+}

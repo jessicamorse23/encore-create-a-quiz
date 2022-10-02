@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0" />
+    <title>JavaScript Quiz Challenge</title>
+    <link rel="stylesheet" href="./assets/style.css"
+  </head>
+  <body class="flex'">
+    <div class="w-20">
+        <h1>Player scores</h1>
+      <ol id="nameScoresContainer"></ol>
+    </div>
+
+    <div class="container w-80">
+      <div class="timer">Time: <span id="time">0</span></div>
+      <div class="scores"><a href="highscores.html">High Score Sheet</a></div>
+      <div class="score">
+        <span id="user-score">0</span>
+        <span id="total-score">/3</span>
+      </div>
+
+      <section class="wrapper">
+        <div id="start-screen" class="start">
+          <h1>Coding Quiz...</h1>
+          <p>
+            Try to answer the JavaScript code-related questions within the allotted time limit. Incorrect answers will subtract time from
+            the quiz clock. Good luck!
+          </p>
+          <button id="start">Start Quiz</button>
+        </div>
+      </section>
+
+      <section class="content hidden" id="question-area">
+        <div id="question-text"></div>
+        <div class="options">
+          <button class="btn btn-option" id="a">A</button>
+          <button class="btn btn-option" id="b">B</button>
+          <button class="btn btn-option" id="c">C</button>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-restart" id="restart">Start Again</button>
+        </div>
+
+        <div id="answerType">...</div>
+      </section>
+
+      <section id="submit-initials" class="hidden">
+        <form id="submitForm">
+          <input id="initials" placeholder="enter initials or playername" required name="initial" />
+          <button id="submit" type="submit">Submit Score</button>
+        </form>
+        <div class="controls">
+          <button class="btn btn-restart" id="restart" onclick="restart()">Start Again</button>
+        </div>
+      </section>
+
+      <section class="score-sheet"></section>
+    </div>
+    <script src="./assets/js/questions.js"></script>
+    <script src="./assets/js/logic.js"></script>
+  </body>
+</html>
