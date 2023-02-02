@@ -7,58 +7,39 @@
     <title>JavaScript Quiz Challenge</title>
     <link rel="stylesheet" href="./assets/style.css"
   </head>
-  <body class="flex'">
-    <div class="w-20">
-        <h1>Player scores</h1>
-      <ol id="nameScoresContainer"></ol>
-    </div>
+  <body>
+    <div class="scores"><a href="highscores.html">View Highscores</a></div>
 
-    <div class="container w-80">
-      <div class="timer">Time: <span id="time">0</span></div>
-      <div class="scores"><a href="highscores.html">High Score Sheet</a></div>
-      <div class="score">
-        <span id="user-score">0</span>
-        <span id="total-score">/3</span>
+    <div class="timer">Time: <span id="time">0</span></div>
+
+    <div class="wrapper">
+      <div id="start-screen" class="start">
+        <h1>Coding Quiz Challenge</h1>
+        <p>
+          Try to answer the following code-related questions within the time
+          limit. Keep in mind that incorrect answers will penalize your
+          score/time by 15 seconds!
+        </p>
+        <button id="start">Start Quiz</button>
       </div>
 
-      <section class="wrapper">
-        <div id="start-screen" class="start">
-          <h1>Coding Quiz...</h1>
-          <p>
-            Try to answer the JavaScript code-related questions within the allotted time limit. Incorrect answers will subtract time from
-            the quiz clock. Good luck!
-          </p>
-          <button id="start">Start Quiz</button>
-        </div>
-      </section>
+      <div id="questions" class="hide">
+        <h2 id="question-title"></h2>
+        <div id="choices" class="choices"></div>
+      </div>
 
-      <section class="content hidden" id="question-area">
-        <div id="question-text"></div>
-        <div class="options">
-          <button class="btn btn-option" id="a">A</button>
-          <button class="btn btn-option" id="b">B</button>
-          <button class="btn btn-option" id="c">C</button>
-        </div>
+      <div id="end-screen" class="hide">
+        <h2>All done!</h2>
+        <p>Your final score is <span id="final-score"></span>.</p>
+        <p>
+          Enter initials: <input type="text" id="initials" max="3" />
+          <button id="submit">Submit</button>
+        </p>
+      </div>
 
-        <div class="controls">
-          <button class="btn btn-restart" id="restart">Start Again</button>
-        </div>
-
-        <div id="answerType">...</div>
-      </section>
-
-      <section id="submit-initials" class="hidden">
-        <form id="submitForm">
-          <input id="initials" placeholder="enter initials or playername" required name="initial" />
-          <button id="submit" type="submit">Submit Score</button>
-        </form>
-        <div class="controls">
-          <button class="btn btn-restart" id="restart" onclick="restart()">Start Again</button>
-        </div>
-      </section>
-
-      <section class="score-sheet"></section>
+      <div id="feedback" class="feedback hide"></div>
     </div>
+
     <script src="./assets/js/questions.js"></script>
     <script src="./assets/js/logic.js"></script>
   </body>
