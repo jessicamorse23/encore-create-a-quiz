@@ -1,220 +1,178 @@
-const restartButton = document.getElementById("restart");
-const aButton = document.getElementById("a");
-const bButton = document.getElementById("b");
-const cButton = document.getElementById("c");
-const questionText = document.getElementById("question-text");
-const startButton = document.getElementById("start");
-const startScreen = document.getElementById("start-screen");
-const questionsBlock = document.getElementById("question-area");
-const userScore = document.getElementById("user-score");
-const submitInitials = document.getElementById("submit-initials");
-const initials = document.getElementById("initials");
-const submitForm = document.getElementById("submitForm");
-const scores = "high scores";
-const highScoreString = localStorage.getItem("high scores");
-const highScores = JSON.parse(highScoreString) ?? [];
-let gameRoundRecords = null;
-const answerType = document.getElementById("answerType");
-const nameScoresContainer = document.getElementById("nameScoresContainer");
+// variables to keep track of quiz state
+var currentQuestionIndex = 0;
+var time = questions.length * 15;
+var timerId;
 
-let currentQuestion = 0;
-var score = 0;
-var secondsLeft = 120;
+// variables to reference DOM elements
+var questionsEl = document.getElementById('questions');
+var timerEl = document.getElementById('time');
+var choicesEl = document.getElementById('choices');
+var submitBtn = document.getElementById('submit');
+var startBtn = document.getElementById('start');
+var initialsEl = document.getElementById('initials');
+var feedbackEl = document.getElementById('feedback');
 
-//initialize gamerounds from localstorage
-const localStorageResult = localStorage.getItem("gameRoundRecords" ?? "[]");
-const lastGameReound = JSON.parse(localStorageResult);
-gameRoundRecords = new Map(lastGameReound);
-showPlayerScores(gameRoundRecords);
-// a series of multiple choice questions
+// sound effects
+var sfxRight = new Audio('assets/sfx/correct.wav');
+var sfxWrong = new Audio('assets/sfx/incorrect.wav');
 
-let questions = [
-  {
-    question: "Which built-in method combines the text of two strings and returns a new string?",
-    answers: {
-      a: "append()",
-      b: "concat()",
-      c: "attach()",
-    },
-    correctAnswer: "b",
-    answer: "concat()",
-    options: ["append()", "concat()", "attach()"],
-  },
+function startQuiz() {
+  // hide start screen
+  var startScreenEl = document.getElementById('start-screen');
+  startScreenEl.setAttribute('class', 'hide');
 
-  {
-    questNumber: 2,
-    question: "Which JavaScript label catches all the values, except for the ones specified?",
-    answers: {
-      a: "catch",
-      b: "label",
-      c: "default",
-    },
-    correctAnswer: "c",
-    answer: "default",
-    options: ["catch", "label", "default"],
-  },
+  // un-hide questions section
+  questionsEl.removeAttribute('class');
 
-  {
-    questNumber: 3,
-    question: "What will the following code return? Boolean(2<8)",
-    answers: {
-      a: "true",
-      b: "false",
-      c: "NaN",
-    },
-    correctAnswer: "a",
-    answer: "true",
-    options: ["true", "false", "NaN"],
-  },
-];
+  // start timer
+  timerId = setInterval(clockTick, 1000);
 
-// option for restart button
-restartButton.addEventListener("click", restart);
+  // show starting time
+  timerEl.textContent = time;
 
-// create a function to generate questions
-function createQuestion() {
-  questionText.innerHTML = questions[currentQuestion].question;
-  aButton.innerHTML = questions[currentQuestion].answers.a;
-
-  aButton.onclick = () => {
-    // if (questions[currentQuestion].correctAnswer === "a") {
-    //   if (score < 3) {
-    //     score++;
-    //   }
-    // }
-    // userScore.innerHTML = score;
-    // next();
-    checkAnswer("a");
-  };
-
-  bButton.innerHTML = questions[currentQuestion].answers.b;
-  bButton.onclick = () => {
-    checkAnswer("b");
-  };
-
-  cButton.innerHTML = questions[currentQuestion].answers.c;
-  cButton.onclick = () => {
-    // if (questions[currentQuestion].correctAnswer === "a") {
-    //   if (score < 3) {
-    //     score++;
-    //   }
-    // }
-    // userScore.innerHTML = score;
-    // next();
-
-    checkAnswer("c");
-  };
+  getQuestion();
 }
 
-// create a function to check answers correct or wrong
-function checkAnswer(answerOption) {
-  if (questions[currentQuestion].correctAnswer === answerOption) {
-    // correctAnswer
-    answerType.textContent = "Correct answer";
-    score++;
-  } else {
-    //wrong answer
-    answerType.textContent = "Wrong answer";
+function getQuestion() {
+  // get current question object from array
+  var currentQuestion = questions[currentQuestionIndex];
+
+  // update title with current question
+  var titleEl = document.getElementById('question-title');
+  titleEl.textContent = currentQuestion.title;
+
+  // clear out any old question choices
+  choicesEl.innerHTML = '';
+
+  // loop over choices
+  for (var i = 0; i < currentQuestion.choices.length; i++) {
+    // create new button for each choice
+    var choice = currentQuestion.choices[i];
+    var choiceNode = document.createElement('button');
+    choiceNode.setAttribute('class', 'choice');
+    choiceNode.setAttribute('value', choice);
+
+    choiceNode.textContent = i + 1 + '. ' + choice;
+
+    // display on the page
+    choicesEl.appendChild(choiceNode);
   }
-  userScore.innerHTML = score;
-
-  //go to next question after 5 seconds delay
-  setTimeout(() => {
-    next();
-  }, 2_000);
 }
 
-function showStartButton() {
-  startButton.classList.remove("hidden");
-}
+function questionClick(event) {
+  var buttonEl = event.target;
 
-// function to call questions
-function showQuestionBlock() {
-  questionsBlock.classList.remove("hidden");
-}
+  // if the clicked element is not a choice button, do nothing.
+  if (!buttonEl.matches('.choice')) {
+    return;
+  }
 
-// function to hide start screen
-function hideStartScreen() {
-  startScreen.classList.add("hidden");
-}
+  // check if user guessed wrong
+  if (buttonEl.value !== questions[currentQuestionIndex].answer) {
+    // penalize time
+    time -= 15;
 
-startButton.addEventListener("click", () => {
-  // alert("Quiz Started");
+    if (time < 0) {
+      time = 0;
+    }
 
-  showStartButton();
-  showQuestionBlock();
-  hideStartScreen();
-  answerType.textContent = "...";
+    // display new time on page
+    timerEl.textContent = time;
 
-  createQuestion();
-  // createNextQuestion();
+    // play "wrong" sound effect
+    sfxWrong.play();
 
-  setInterval(function () {
-    // console.log(secondsLeft);
-    time.innerText = secondsLeft;
-    secondsLeft--;
+    feedbackEl.textContent = 'Wrong!';
+  } else {
+    // play "right" sound effect
+    sfxRight.play();
+
+    feedbackEl.textContent = 'Correct!';
+  }
+
+  // flash right/wrong feedback on page for half a second
+  feedbackEl.setAttribute('class', 'feedback');
+  setTimeout(function () {
+    feedbackEl.setAttribute('class', 'feedback hide');
   }, 1000);
-});
-function restart() {
-  currentQuestion = 0;
-  aButton.classList.remove("hide");
-  bButton.classList.remove("hide");
-  cButton.classList.remove("hide");
-  score = 0;
-  userScore.innerHTML = score;
-  secondsLeft = 120;
-  createQuestion();
 
-  window.location.reload();
-}
+  // move to next question
+  currentQuestionIndex++;
 
-function next() {
-  currentQuestion++;
-  if (currentQuestion > 2) {
-    endQuiz();
+  // check if we've run out of questions
+  if (time <= 0 || currentQuestionIndex === questions.length) {
+    quizEnd();
   } else {
-    createQuestion();
+    getQuestion();
   }
-
-  answerType.textContent = "...";
 }
 
-function endQuiz(score) {
-  alert("Quiz Ended!");
+function quizEnd() {
+  // stop timer
+  clearInterval(timerId);
 
-  questionsBlock.classList.add("hidden");
-  submitInitials.classList.remove("hidden");
+  // show end screen
+  var endScreenEl = document.getElementById('end-screen');
+  endScreenEl.removeAttribute('class');
+
+  // show final score
+  var finalScoreEl = document.getElementById('final-score');
+  finalScoreEl.textContent = time;
+
+  // hide questions section
+  questionsEl.setAttribute('class', 'hide');
 }
 
-function addNameAndScoreToLocalStorage(name, score) {
-  // console.table({ name, score });
+function clockTick() {
+  // update time
+  time--;
+  timerEl.textContent = time;
 
-  gameRoundRecords.set(name, score);
-  localStorage.setItem("gameRoundRecords", JSON.stringify([...gameRoundRecords]));
+  // check if user ran out of time
+  if (time <= 0) {
+    quizEnd();
+  }
 }
 
-function showPlayerScores(_gameRoundRecords) {
-  const nameScoresHtml = [...gameRoundRecords]
-    .map((round) => {
-      const [name, _score] = round;
-      return `<li>Name: ${name}  Score: ${_score}</li>`;
-    })
-    .join("");
+function saveHighscore() {
+  // get value of input box
+  var initials = initialsEl.value.trim();
 
-  nameScoresContainer.innerHTML = nameScoresHtml;
+  // make sure value wasn't empty
+  if (initials !== '') {
+    // get saved scores from localstorage, or if not any, set to empty array
+    var highscores =
+      JSON.parse(window.localStorage.getItem('highscores')) || [];
+
+    // format new score object for current user
+    var newScore = {
+      score: time,
+      initials: initials,
+    };
+
+    // save to localstorage
+    highscores.push(newScore);
+    window.localStorage.setItem('highscores', JSON.stringify(highscores));
+
+    // redirect to next page
+    window.location.href = 'highscores.html';
+  }
 }
 
-submitForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  var input = initials.value;
-  console.log(input);
+function checkForEnter(event) {
+  // "13" represents the enter key
+  if (event.key === 'Enter') {
+    saveHighscore();
+  }
+}
 
-  addNameAndScoreToLocalStorage(event.target.elements.initial.value, score);
+// user clicks button to submit initials
+submitBtn.onclick = saveHighscore;
 
-  showPlayerScores(gameRoundRecords);
+// user clicks button to start quiz
+startBtn.onclick = startQuiz;
 
-  //  get the name
-  //  get the score
-  //  save both to localStorage
-  //
-});
+// user clicks on element containing choices
+choicesEl.onclick = questionClick;
+
+initialsEl.onkeyup = checkForEnter;
